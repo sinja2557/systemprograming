@@ -1,0 +1,6 @@
+ar
+
+gcc -c (file).c  # make object file
+ar ruv lib(name).a (file).o # make library
+gcc -o (name).out -L. (file).c -l(name) # output file (with library)
+
