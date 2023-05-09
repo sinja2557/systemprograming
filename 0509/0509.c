@@ -17,7 +17,10 @@ int main(int argc, char* argv[]){
 
 	int fd[2], pagesize, length;
 	caddr_t addr1, addr2;
+	size_t copylen;
 	struct stat statbuf;
+	off_t set = 0;
+
 
 	if (argc != 3){
 		fprintf(stderr, "Usage : %s src dst\n", argv[0]);
@@ -42,40 +45,56 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 
-	addr1 = mmap(NULL, length, PROT_READ|PROT_WRITE, MAP_SHARED, fd[0], (off_t)0);
-	addr2 = mmap(NULL, length, PROT_READ|PROT_WRITE, MAP_SHARED, fd[1], (off_t)0);
-
-	if (addr1 == MAP_FAILED){
-		perror("mmap");
+	if(ftruncate(fd[1], statbuf.st_size) == -1){
+		perror("ftruncate");
 		exit(1);
 	}
 
-	if (addr2 == MAP_FAILED){
-		perror("mmap");
-		exit(1);
-	}
-
-	close(fd[0]);
-	close(fd[1]);
 
 	printf("Page size : %d\n", length);
 	printf("File size : %ld\n", statbuf.st_size);
 
-	for(int i = 0; i < statbuf.st_size; i++){
-		addr2 += addr1[i];
+	while (set < statbuf.st_size){
+
+		if((statbuf.st_size - set) > length){
+			copylen = length;
+		}
+		else {
+			copylen = statbuf.st_size;
+		}
+
+
+		addr1 = mmap(NULL, statbuf.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd[0], set);
+		addr2 = mmap(NULL, statbuf.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd[1], set);
+
+		if (addr1 == MAP_FAILED){
+			perror("mmap");
+			exit(1);
+		}
+
+		if (addr2 == MAP_FAILED){
+			perror("mmap");
+			exit(1);
+		}
+
+		memcpy(addr2, addr1, copylen);
+
+		if(munmap(addr1, copylen) == -1){
+			perror("munmap");
+			exit(1);
+		}
+
+		if(munmap(addr2, copylen) == -1){
+			perror("munmap");
+			exit(1);
+		}
+
+		set += copylen;
+
 	}
 
-
-	if(munmap(addr1, length) == -1) {
-		perror("munmap");
-		exit(1);
-	}
-
-	if(munmap(addr2, length) == -1){
-		perror("munmap");
-		exit(1);
-	}
-
+	close(fd[0]);
+	close(fd[1]);
 
 }
 
