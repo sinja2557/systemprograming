@@ -8,15 +8,17 @@
 #include <dirent.h>
 #include <pwd.h>
 #include <sys/wait.h>
-#include <pthread.h>
-#include <signal.h>
-#include <sys/mman.h>
 
 
 int main(int argc, char* argv[]){
-
+	if(access(argv[1], F_OK)) {
+			printf("%s : is Found.\n", argv[1]);
+		}
+		else {
+			printf("%s : is not found.\n", argv[1]);
+		}
+	}
 	
-
 	return 0;
 }
 
