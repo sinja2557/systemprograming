@@ -67,6 +67,9 @@ int main(int argc, char* argv[]){
 		addr1 = mmap(NULL, statbuf.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd[0], set);
 		addr2 = mmap(NULL, statbuf.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd[1], set);
 
+
+		printf("test\n");
+
 		if (addr1 == MAP_FAILED){
 			perror("mmap");
 			exit(1);

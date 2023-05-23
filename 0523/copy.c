@@ -11,7 +11,8 @@
 #include <pthread.h>
 #include <signal.h>
 #include <sys/mman.h>
-
+#include <sys/ipc.h>
+#include <sys/msg.h>
 
 int main(int argc, char* argv[]){
 

@@ -1,0 +1,2 @@
+A type = 20
+B type = 40

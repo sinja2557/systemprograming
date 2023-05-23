@@ -7,16 +7,17 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <pwd.h>
-#include <sys/wait.h>
-#include <pthread.h>
-#include <signal.h>
-#include <sys/mman.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
 
 int main(int argc, char* argv[]){
 
-	
+	printf("--> Before exec function\n");
+
+	if(execlp("ls", "ls", "-a", (char*)NULL) == -1){
+		perror("execlp");
+		exit(1);
+	}
+
+	printf("--> After exec function\n");
 
 	return 0;
 }
